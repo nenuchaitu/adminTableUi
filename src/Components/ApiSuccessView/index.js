@@ -12,13 +12,17 @@ import {
   CheckBox,
   Row,
   Table,
+  DeleteSelectedButton,
+  TableBody,
+  DeleteAndSearchInputContainer,
 } from "./StyledComponents";
 
 const ApiSuccessView = (props) => {
-  const [active, setActive] = useState(1);
-  const [isChecked, SetIsChecked] = useState(false);
   const offset = 10;
   const { usersList } = props;
+  const [active, setActive] = useState(1);
+  const [isChecked, SetIsChecked] = useState(false);
+  const [selectedList, setSelectedList] = useState([]);
   const [filteredList, setFilteredList] = useState(usersList);
 
   const items = [];
@@ -46,6 +50,76 @@ const ApiSuccessView = (props) => {
     </div>
   );
 
+  const updateTable = (data) => {
+    const updatedData = filteredList.map((user) => {
+      if (user.id === data.id) {
+        return data;
+      } else {
+        return user;
+      }
+    });
+    setFilteredList(updatedData);
+  };
+
+  const searchUserItem = (event) => {
+    const searchInput = event.target.value.toLowerCase();
+    let resultList = usersList.filter((user) => {
+      if (
+        user.name.toLowerCase().includes(searchInput) ||
+        user.email.toLowerCase().includes(searchInput) ||
+        user.role.toLowerCase().includes(searchInput)
+      ) {
+        return user;
+      } else {
+        return null;
+      }
+    });
+    setFilteredList(resultList);
+  };
+
+  const deleteUserFromUi = (id) => {
+    const updatedList = filteredList.filter((user) => user.id !== id);
+    setFilteredList(updatedList);
+  };
+
+  const removeFromSelectedList = (id) => {
+    const updatedList = selectedList.filter((userId) => userId !== id);
+    setSelectedList(updatedList);
+  };
+
+  const addToSelectedList = (id) => {
+    if (!selectedList.includes(id)) {
+      selectedList.push(id);
+    }
+  };
+
+  const updateSelectedList = () => {
+    const masterCheckBox = document.getElementById("masterCheckBox");
+    const masterCheckBoxChecked = masterCheckBox.checked;
+    if (masterCheckBoxChecked === true) {
+      const updatedSelectedList = filteredList.map((user) => {
+        const upperLimit = active * 10;
+        const lowerLimit = upperLimit - offset;
+        if (parseInt(user.id) <= upperLimit && parseInt(user.id) > lowerLimit) {
+          return user.id;
+        }
+        return null;
+      });
+      const formattedList = updatedSelectedList.filter((item) => item !== null);
+      setSelectedList(formattedList);
+    } else {
+      setSelectedList([]);
+    }
+  };
+
+  const DeleteSelectedList = () => {
+    const finalList = filteredList.filter(
+      (user) => !selectedList.includes(user.id)
+    );
+    setFilteredList(finalList);
+    setSelectedList([]);
+  };
+
   const renderColumnTitle = () => (
     <>
       <ColumnTitles>
@@ -53,9 +127,12 @@ const ApiSuccessView = (props) => {
           <TitleHeading>
             <CheckBox
               type="checkbox"
+              id="masterCheckBox"
               onChange={() => {
                 SetIsChecked(!isChecked);
+                updateSelectedList();
               }}
+              checked={isChecked}
             />
           </TitleHeading>
           <TitleHeading>Name</TitleHeading>
@@ -67,53 +144,46 @@ const ApiSuccessView = (props) => {
     </>
   );
 
-  const searchUserItem = (event) => {
-    const searchInput = event.target.value.toLowerCase();
-    let resultList = usersList.filter((user) => {
-      if (
-        user.name.toLowerCase().includes(searchInput) ||
-        user.email.toLowerCase().includes(searchInput) ||
-        user.role.toLowerCase().includes(searchInput)
-      ) {
-        return user;
-      }
-    });
-    setFilteredList(resultList);
-  };
-
-  const deleteUserFromUi = (id) => {
-    const updatedList = filteredList.filter((user) => user.id !== id);
-    setFilteredList(updatedList);
-  };
-
   return (
     <SuccessViewContainer>
-      <SearchElement
-        type="search"
-        placeholder="Search by email,name or role"
-        onChange={searchUserItem}
-      />
+      <DeleteAndSearchInputContainer>
+        {selectedList.length > 0 ? (
+          <DeleteSelectedButton type="button" onClick={DeleteSelectedList}>
+            Delete Selected
+          </DeleteSelectedButton>
+        ) : null}
+        <SearchElement
+          type="search"
+          placeholder="Search by email,name or role"
+          onChange={searchUserItem}
+        />
+      </DeleteAndSearchInputContainer>
       <Table>
         {renderColumnTitle()}
-        {filteredList.map((user) => {
-          const upperLimit = active * 10;
-          const lowerLimit = upperLimit - offset;
-          if (
-            parseInt(user.id) <= upperLimit &&
-            parseInt(user.id) > lowerLimit
-          ) {
-            return (
-              <UserListItem
-                key={user.id}
-                user={user}
-                isChecked={isChecked}
-                deleteUserFromUi={deleteUserFromUi}
-              />
-            );
-          } else {
-            return null;
-          }
-        })}
+        <TableBody>
+          {filteredList.map((user) => {
+            const upperLimit = active * 10;
+            const lowerLimit = upperLimit - offset;
+            if (
+              parseInt(user.id) <= upperLimit &&
+              parseInt(user.id) > lowerLimit
+            ) {
+              return (
+                <UserListItem
+                  key={user.id}
+                  user={user}
+                  isChecked={isChecked}
+                  deleteUserFromUi={deleteUserFromUi}
+                  updateTable={updateTable}
+                  addToSelectedList={addToSelectedList}
+                  removeFromSelectedList={removeFromSelectedList}
+                />
+              );
+            } else {
+              return null;
+            }
+          })}
+        </TableBody>
       </Table>
       {paginationBasic}
     </SuccessViewContainer>

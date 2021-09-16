@@ -2,11 +2,14 @@ import styled from "styled-components";
 
 export const Row = styled.tr`
   width: 100%;
+  background-color: ${(props) =>
+    props.contentEditable === true ? "#D3D3D3" : "#ffff"};
+  outline: none;
 `;
-export const TableBody = styled.tbody``;
+
 export const TableValue = styled.td`
   padding: 8px;
-  border: 1px solid #ffff;
+  border: 1px solid #fff;
   text-align: left;
   width: 20%;
 `;

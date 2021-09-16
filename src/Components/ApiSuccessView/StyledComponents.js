@@ -7,8 +7,14 @@ export const SuccessViewContainer = styled.div`
   flex-direction: column;
   width: 90%;
 `;
-export const SearchElement = styled.input`
+export const DeleteAndSearchInputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
   width: 100%;
+`;
+export const SearchElement = styled.input`
+  width: 70%;
   height: 35px;
   outline: none;
 `;
@@ -28,7 +34,20 @@ export const TitleHeading = styled.th`
   text-align: left;
   width: 20%;
 `;
+export const TableBody = styled.tbody``;
 export const CheckBox = styled.input`
   width: 22px;
   margin-left: 18px;
+`;
+
+export const DeleteSelectedButton = styled.button`
+  background-color: #967c7a;
+  padding: 5px 15px 5px 15px;
+  color: #ffffff;
+  font-size: 12px;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  border-radius: 7px;
+  height: 35px;
 `;
