@@ -26,12 +26,12 @@ const UserListItem = (props) => {
   };
 
   const onClickUpdateTableValues = () => {
-    var cell = document.getElementsByTagName("td");
+    const cell = document.getElementsByName(`${user.id}`);
     const data = {
       id: user.id,
-      name: cell[1].innerHTML,
-      email: cell[2].innerHTML,
-      role: cell[3].innerHTML,
+      name: cell[0].innerHTML,
+      email: cell[1].innerHTML,
+      role: cell[2].innerHTML,
     };
     updateTable(data);
     setContentEditable(false);
@@ -78,9 +78,15 @@ const UserListItem = (props) => {
           id={user.id}
         />
       </TableValue>
-      <TableValue contentEditable={contentEditable}>{user.name}</TableValue>
-      <TableValue contentEditable={contentEditable}>{user.email}</TableValue>
-      <TableValue contentEditable={contentEditable}>{user.role}</TableValue>
+      <TableValue name={user.id} contentEditable={contentEditable}>
+        {user.name}
+      </TableValue>
+      <TableValue name={user.id} contentEditable={contentEditable}>
+        {user.email}
+      </TableValue>
+      <TableValue name={user.id} contentEditable={contentEditable}>
+        {user.role}
+      </TableValue>
       <TableValue>
         {contentEditable ? (
           <>
@@ -88,7 +94,7 @@ const UserListItem = (props) => {
               <AiFillSave />
             </Button>
             <Button type="button" onClick={cancelEdit}>
-              <FcCancel />
+              <FcCancel color={"red"} />
             </Button>
           </>
         ) : (
@@ -97,7 +103,7 @@ const UserListItem = (props) => {
               <BiEdit />
             </Button>
             <Button type="button" onClick={onClickPassId}>
-              <AiOutlineDelete />
+              <AiOutlineDelete color={"red"} />
             </Button>
           </>
         )}

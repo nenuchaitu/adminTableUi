@@ -6,6 +6,10 @@ export const SuccessViewContainer = styled.div`
   align-items: center;
   flex-direction: column;
   width: 90%;
+  padding-bottom: 90px;
+  @media screen and (max-width: 567px) {
+    padding-bottom: 30px;
+  }
 `;
 export const DeleteAndSearchInputContainer = styled.div`
   display: flex;

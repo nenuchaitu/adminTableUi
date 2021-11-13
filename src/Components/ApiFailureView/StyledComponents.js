@@ -5,6 +5,11 @@ export const ErrorViewContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  width: 70%;
+  padding-bottom: 90px;
+  @media screen and (max-width: 567px) {
+    padding-bottom: 30px;
+  }
 `;
 export const FailureImage = styled.img`
   width: 300px;
@@ -14,6 +19,13 @@ export const FailureImage = styled.img`
     height: 350px;
     margin-top: 70px;
   }
+`;
+export const FetchFailureText = styled.h1`
+  font-size: 24px;
+  font-weight: 700;
+  font-family: "Roboto";
+  color: #73716b;
+  margin-top: 20px;
 `;
 export const RetryButton = styled.button`
   font-size: 14px;

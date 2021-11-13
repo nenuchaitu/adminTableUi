@@ -20,13 +20,14 @@ import {
 const ApiSuccessView = (props) => {
   const offset = 10;
   const { usersList } = props;
+  const lastPage = Math.ceil(usersList.length / 10);
   const [active, setActive] = useState(1);
   const [isChecked, SetIsChecked] = useState(false);
   const [selectedList, setSelectedList] = useState([]);
   const [filteredList, setFilteredList] = useState(usersList);
 
   const items = [];
-  for (let number = 1; number <= 5; number++) {
+  for (let number = 1; number <= lastPage; number++) {
     items.push(
       <Pagination.Item
         key={number}
@@ -35,6 +36,7 @@ const ApiSuccessView = (props) => {
           const value = parseInt(event.target.textContent[0]);
           setActive(value);
           SetIsChecked(false);
+          setSelectedList([]);
         }}
       >
         {number}
@@ -45,7 +47,7 @@ const ApiSuccessView = (props) => {
   const paginationBasic = (
     <div>
       <br />
-      <Pagination size="lg">{items}</Pagination>
+      <Pagination size="m">{items}</Pagination>
       <br />
     </div>
   );
@@ -88,8 +90,11 @@ const ApiSuccessView = (props) => {
   };
 
   const addToSelectedList = (id) => {
+    console.log(selectedList);
     if (!selectedList.includes(id)) {
-      selectedList.push(id);
+      setSelectedList((prevState) => {
+        return [...prevState, id];
+      });
     }
   };
 

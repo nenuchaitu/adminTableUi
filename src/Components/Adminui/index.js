@@ -2,7 +2,11 @@ import { Component } from "react";
 import Loader from "react-loader-spinner";
 import ApiFailureView from "../ApiFailureView";
 import ApiSuccessView from "../ApiSuccessView";
-import { LoadingViewContainer, AppContainer } from "./StyledComponents";
+import {
+  LoadingViewContainer,
+  AppContainer,
+  AdminTableHeading,
+} from "./StyledComponents";
 
 const apiStatusConstants = {
   initial: "INITIAL",
@@ -13,7 +17,6 @@ const apiStatusConstants = {
 
 class Adminui extends Component {
   state = {
-    darkModeOn: false,
     usersList: [],
     apiStatus: apiStatusConstants.initial,
   };
@@ -74,7 +77,12 @@ class Adminui extends Component {
   };
 
   render() {
-    return <AppContainer>{this.renderAdminuiView()}</AppContainer>;
+    return (
+      <AppContainer>
+        <AdminTableHeading>Users List</AdminTableHeading>
+        {this.renderAdminuiView()}
+      </AppContainer>
+    );
   }
 }
 export default Adminui;

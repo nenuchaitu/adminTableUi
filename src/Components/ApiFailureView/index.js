@@ -2,6 +2,7 @@ import {
   ErrorViewContainer,
   FailureImage,
   RetryButton,
+  FetchFailureText,
 } from "./StyledComponents";
 
 const ApiFailureView = (props) => {
@@ -15,9 +16,12 @@ const ApiFailureView = (props) => {
     <>
       <ErrorViewContainer>
         <FailureImage
-          src="https://assets.ccbp.in/frontend/react-js/failure-img.png"
+          src="https://res.cloudinary.com/dsgniwzvz/image/upload/v1636800655/geekTrsut/transparent-blue-cassette-tape-message-board-with-earphone-turquoise-backdrop_tdsbrb.jpg"
           alt="data fetch failure"
         />
+        <FetchFailureText>
+          oops! something went wrong."Rewind" and{" "}
+        </FetchFailureText>
         <RetryButton type="button" onClick={onClickRetry}>
           Retry
         </RetryButton>
