@@ -116,15 +116,13 @@ const ApiSuccessView = (props) => {
       setFilteredList(updatedFilterList);
       SetIsMasterChecked(false);
     } else {
-      if (selectedList.length !== 10) {
-        const updatedFilterList = filteredList.map((user) => {
-          if (user.id === id) {
-            return { ...user, isChecked: !user.isChecked };
-          }
-          return user;
-        });
-        setFilteredList(updatedFilterList);
-      }
+      const updatedFilterList = filteredList.map((user) => {
+        if (user.id === id) {
+          return { ...user, isChecked: !user.isChecked };
+        }
+        return user;
+      });
+      setFilteredList(updatedFilterList);
     }
   };
 
