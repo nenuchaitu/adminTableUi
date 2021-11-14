@@ -34,8 +34,12 @@ class Adminui extends Component {
     const dataFetched = await fetch(apiUrl);
     if (dataFetched.ok) {
       const dataResolved = await dataFetched.json();
+      const updatedList = dataResolved.map((eachUser) => ({
+        ...eachUser,
+        isChecked: false,
+      }));
       this.setState({
-        usersList: dataResolved,
+        usersList: updatedList,
         apiStatus: apiStatusConstants.success,
       });
     } else {

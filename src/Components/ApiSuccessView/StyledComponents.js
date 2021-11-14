@@ -16,11 +16,19 @@ export const DeleteAndSearchInputContainer = styled.div`
   align-items: center;
   justify-content: space-evenly;
   width: 100%;
+  margin-bottom: 30px;
+  @media screen and (max-width: 576px) {
+    flex-direction: column;
+  }
 `;
 export const SearchElement = styled.input`
   width: 70%;
   height: 35px;
   outline: none;
+`;
+export const TableContainer = styled.div`
+  overflow-x: auto;
+  width: 100%;
 `;
 export const Table = styled.table`
   border-collapse: collapse;
@@ -54,4 +62,7 @@ export const DeleteSelectedButton = styled.button`
   outline: none;
   border-radius: 7px;
   height: 35px;
+  @media screen and (max-width: 576px) {
+    margin-bottom: 20px;
+  }
 `;

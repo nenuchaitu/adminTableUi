@@ -7,15 +7,8 @@ import { BiEdit } from "react-icons/bi";
 
 const UserListItem = (props) => {
   const [contentEditable, setContentEditable] = useState(false);
-  const {
-    user,
-    deleteUserFromUi,
-    updateTable,
-    addToSelectedList,
-    removeFromSelectedList,
-  } = props;
-  let { isChecked } = props;
-  const [isListChecked, setIsListChecked] = useState(true);
+  const { user, deleteUserFromUi, updateTable, toggleCheckboxInList } = props;
+  let { isMasterChecked } = props;
 
   const onClickPassId = () => {
     deleteUserFromUi(user.id);
@@ -42,30 +35,7 @@ const UserListItem = (props) => {
   };
 
   const toggleCheckBox = () => {
-    setIsListChecked(!isListChecked);
-    const checkBoxValue = document.getElementById(`${user.id}`);
-    const isTicked = checkBoxValue.checked;
-    if (isTicked) {
-      addToSelectedList(user.id);
-    } else {
-      removeFromSelectedList(user.id);
-    }
-  };
-
-  const unSelectedValue = () => {
-    if (isChecked === true) {
-      if (isListChecked) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      if (isListChecked) {
-        return false;
-      } else {
-        return true;
-      }
-    }
+    toggleCheckboxInList(user.id);
   };
 
   return (
@@ -73,7 +43,7 @@ const UserListItem = (props) => {
       <TableValue>
         <CheckBox
           type="checkbox"
-          checked={(isChecked && isListChecked) || unSelectedValue()}
+          checked={user.isChecked || isMasterChecked}
           onChange={toggleCheckBox}
           id={user.id}
         />

@@ -1,6 +1,6 @@
 import Pagination from "react-bootstrap/Pagination";
 import "bootstrap/dist/css/bootstrap.min.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import UserListItem from "../UserListItem";
 
@@ -15,16 +15,29 @@ import {
   DeleteSelectedButton,
   TableBody,
   DeleteAndSearchInputContainer,
+  TableContainer,
 } from "./StyledComponents";
 
 const ApiSuccessView = (props) => {
-  const offset = 10;
+  const limit = 10;
   const { usersList } = props;
   const lastPage = Math.ceil(usersList.length / 10);
   const [active, setActive] = useState(1);
-  const [isChecked, SetIsChecked] = useState(false);
+  const [isMasterChecked, SetIsMasterChecked] = useState(false);
   const [selectedList, setSelectedList] = useState([]);
   const [filteredList, setFilteredList] = useState(usersList);
+  useEffect(() => {
+    const updateSelectedList = () => {
+      var updatedSelectedList = [];
+      filteredList.forEach((user) => {
+        if (user.isChecked === true) {
+          updatedSelectedList.push(user.id);
+        }
+      });
+      setSelectedList(updatedSelectedList);
+    };
+    updateSelectedList();
+  }, [filteredList]);
 
   const items = [];
   for (let number = 1; number <= lastPage; number++) {
@@ -35,7 +48,7 @@ const ApiSuccessView = (props) => {
         onClick={(event) => {
           const value = parseInt(event.target.textContent[0]);
           setActive(value);
-          SetIsChecked(false);
+          SetIsMasterChecked(false);
           setSelectedList([]);
         }}
       >
@@ -84,45 +97,65 @@ const ApiSuccessView = (props) => {
     setFilteredList(updatedList);
   };
 
-  const removeFromSelectedList = (id) => {
-    const updatedList = selectedList.filter((userId) => userId !== id);
-    setSelectedList(updatedList);
-  };
-
-  const addToSelectedList = (id) => {
-    console.log(selectedList);
-    if (!selectedList.includes(id)) {
-      setSelectedList((prevState) => {
-        return [...prevState, id];
-      });
-    }
-  };
-
-  const updateSelectedList = () => {
-    const masterCheckBox = document.getElementById("masterCheckBox");
-    const masterCheckBoxChecked = masterCheckBox.checked;
-    if (masterCheckBoxChecked === true) {
-      const updatedSelectedList = filteredList.map((user) => {
-        const upperLimit = active * 10;
-        const lowerLimit = upperLimit - offset;
-        if (parseInt(user.id) <= upperLimit && parseInt(user.id) > lowerLimit) {
-          return user.id;
-        }
-        return null;
-      });
-      const formattedList = updatedSelectedList.filter((item) => item !== null);
-      setSelectedList(formattedList);
-    } else {
-      setSelectedList([]);
-    }
-  };
-
   const DeleteSelectedList = () => {
     const finalList = filteredList.filter(
       (user) => !selectedList.includes(user.id)
     );
     setFilteredList(finalList);
     setSelectedList([]);
+  };
+
+  const toggleCheckboxInList = (id) => {
+    if (isMasterChecked) {
+      const updatedFilterList = filteredList.map((user) => {
+        if (user.id === id) {
+          return { ...user, isChecked: !user.isChecked };
+        }
+        return user;
+      });
+      setFilteredList(updatedFilterList);
+      SetIsMasterChecked(false);
+    } else {
+      if (selectedList.length !== 10) {
+        const updatedFilterList = filteredList.map((user) => {
+          if (user.id === id) {
+            return { ...user, isChecked: !user.isChecked };
+          }
+          return user;
+        });
+        setFilteredList(updatedFilterList);
+      }
+    }
+  };
+
+  const toggleMasterCheckBox = async () => {
+    const masterCheckBox = document.getElementById("masterCheckBox");
+    const masterCheckBoxChecked = masterCheckBox.checked;
+    if (masterCheckBoxChecked === true) {
+      const updatedSelectedList = [];
+      const updatedFilteredList = filteredList.map((user) => {
+        const upperLimit = active * 10;
+        const lowerLimit = upperLimit - limit;
+        if (parseInt(user.id) <= upperLimit && parseInt(user.id) > lowerLimit) {
+          updatedSelectedList.push(user.id);
+          return { ...user, isChecked: true };
+        }
+        return null;
+      });
+      const formattedFilteredList = updatedFilteredList.filter(
+        (item) => item !== null
+      );
+      setSelectedList(updatedSelectedList);
+      setFilteredList(formattedFilteredList);
+    } else {
+      if (selectedList.length === 10) {
+        const updatedFilterList = filteredList.map((user) => {
+          return { ...user, isChecked: false };
+        });
+        setFilteredList(updatedFilterList);
+        setSelectedList([]);
+      }
+    }
   };
 
   const renderColumnTitle = () => (
@@ -134,10 +167,10 @@ const ApiSuccessView = (props) => {
               type="checkbox"
               id="masterCheckBox"
               onChange={() => {
-                SetIsChecked(!isChecked);
-                updateSelectedList();
+                SetIsMasterChecked(!isMasterChecked);
+                toggleMasterCheckBox();
               }}
-              checked={isChecked}
+              checked={isMasterChecked}
             />
           </TitleHeading>
           <TitleHeading>Name</TitleHeading>
@@ -163,33 +196,34 @@ const ApiSuccessView = (props) => {
           onChange={searchUserItem}
         />
       </DeleteAndSearchInputContainer>
-      <Table>
-        {renderColumnTitle()}
-        <TableBody>
-          {filteredList.map((user) => {
-            const upperLimit = active * 10;
-            const lowerLimit = upperLimit - offset;
-            if (
-              parseInt(user.id) <= upperLimit &&
-              parseInt(user.id) > lowerLimit
-            ) {
-              return (
-                <UserListItem
-                  key={user.id}
-                  user={user}
-                  isChecked={isChecked}
-                  deleteUserFromUi={deleteUserFromUi}
-                  updateTable={updateTable}
-                  addToSelectedList={addToSelectedList}
-                  removeFromSelectedList={removeFromSelectedList}
-                />
-              );
-            } else {
-              return null;
-            }
-          })}
-        </TableBody>
-      </Table>
+      <TableContainer>
+        <Table>
+          {renderColumnTitle()}
+          <TableBody>
+            {filteredList.map((user) => {
+              const upperLimit = active * 10;
+              const lowerLimit = upperLimit - limit;
+              if (
+                parseInt(user.id) <= upperLimit &&
+                parseInt(user.id) > lowerLimit
+              ) {
+                return (
+                  <UserListItem
+                    key={user.id}
+                    user={user}
+                    isMasterChecked={isMasterChecked}
+                    deleteUserFromUi={deleteUserFromUi}
+                    updateTable={updateTable}
+                    toggleCheckboxInList={toggleCheckboxInList}
+                  />
+                );
+              } else {
+                return null;
+              }
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
       {paginationBasic}
     </SuccessViewContainer>
   );
